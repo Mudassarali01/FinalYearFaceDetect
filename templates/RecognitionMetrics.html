@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Recognition Metrics</title>
+</head>
+<body>
+    <h1>Recognition Metrics</h1>
+    
+    <div class="container">
+        <h1 class="text-center mb-5 text-white">Metrics</h1>
+        <div class="row mb-5 justify-content-center">
+            <div class="col-md-3">
+                <form class="mb-3 w-100" action="/whole" method="post">
+                    <button class="btn btn-primary blue-btn w-100">View Whole Database</button>
+                </form>
+            </div>
+            <div class="col-md-3">
+                <form class="mb-3 w-100" action="/metrics_summary" method="post">
+                    <button class="btn btn-primary blue-btn w-100">View Summary Statistics</button>
+                </form>
+            </div>
+            <div class="col-md-3">
+                <form class="mb-3 w-100" action="/" method="GET">
+                    <button class="btn btn-primary blue-btn w-100">Logout</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-secondary table-striped table-bordered table-hover mb-5">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Name</th>
+                            <th>Result</th>
+                            <th>Confidence</th>
+                            <th>Liveness Check</th>
+                            <th>Spoofing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                        <tr>
+                            <td>{{ row['timestamp'] }}</td>
+                            <td>{{ row['name'] }}</td>
+                            <td>{{ row['recognition_result'] }}</td>
+                            <td>{% if row['confidence'] %}{{ "%.1f"|format(row['confidence']*100) }}%{% else %}N/A{% endif %}</td>
+                            <td>{{ row['liveness_check'] }}</td>
+                            <td>{% if row['is_spoofing'] %}Yes{% else %}No{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

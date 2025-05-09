@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Attendance Management System</title>
+
+    <style>
+        .box form {
+            position: absolute;
+            inset: 4px;
+            background: #222;
+            padding: 50px 40px;
+            border-radius: 8px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .box form h2 {
+            color: #fff;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 0.1em;
+        }
+
+        .box form .inputBox {
+            position: relative;
+            width: 300px;
+            margin-top: 35px;
+        }
+
+        .box form .inputBox input {
+            position: relative;
+            width: 100%;
+            padding: 20px 10px 10px;
+            background: transparent;
+            outline: none;
+            border: none;
+            box-shadow: none;
+            color: #23242a;
+            font-size: 1em;
+            letter-spacing: 0.05em;
+            transition: 0.5s;
+            z-index: 10;
+        }
+
+        .box form .inputBox span {
+            position: absolute;
+            left: 0;
+            padding: 20px 0px 10px;
+            pointer-events: none;
+            color: #8f8f8f;
+            font-size: 1em;
+            letter-spacing: 0.05em;
+            transition: 0.5s;
+        }
+
+        .box form .inputBox input:valid~span,
+        .box form .inputBox input:focus~span {
+            color: #fff;
+            font-size: 0.75em;
+            transform: translateY((-34px));
+        }
+
+        .box form .inputBox i {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background: #fff;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: 0.5s;
+            pointer-events: none;
+        }
+
+        .box form .inputBox input:valid~i,
+        .box form .inputBox input:focus~i {
+            height: 44px;
+        }
+
+        #submit {
+            border: none;
+            outline: none;
+            padding: 9px 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            border-radius: 4px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        #submit:active {
+            opacity: 0.8;
+        }
+    </style>
+
+</head>
+
+<body class="d-flex justify-content-center align-items-center" style="min-height: 100vh !important;">
+
+    <div class="box">
+        <span class="borderLine"></span>
+        <div class="form-area">
+            <form action="/name" method="POST">
+                <h2>Register</h2>
+                <div class="inputBox">
+                    <input type="text" name="name1" id="name" required>
+                    <span>Enter Your Name</span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input type="number" name="name2" id="name" required>
+                    <span>Enter Your Registration Number</span>
+                    <i></i>
+                </div>
+
+                <div class="links">
+                    <a href="/">Home</a>
+                    <a href="/login">Admin Login</a>
+                </div>
+                
+                <input type="submit" name="submit" id="submit">
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

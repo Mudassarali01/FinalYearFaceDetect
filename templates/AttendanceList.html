@@ -1,0 +1,111 @@
+<!-- <!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Student Attendance Database</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>  
+<style>
+    #page::before{
+        content: "";
+        position: absolute;
+        height: 100%;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<body>  
+    <section id="page">
+    <div class="container">
+        <br><br><br>
+        <h1 class="text-center" style="color:chocolate;"> <strong> Whole Database</strong></h1>
+        <br><br><br>
+        <h3 style="font-style:verdana; ">Student's full attendance record</h3>
+        <br><br>
+<table class="table table-bordered" >  
+    <thead>  
+        <td> <strong> Name</strong></td>  
+        <td><strong></strong>Time</strong></td>  
+        <td><strong></strong>Date</strong></td>  
+    </thead>    
+    {% for row in rows %}  
+        <tr>  
+            <td><strong>{{row["NAME"]}}</strong></td>  
+            <td><strong>{{row["Time"]}}</strong></td>  
+            <td><strong>{{row["Date"]}}</strong></td>  
+         
+        </tr>  
+      
+    {% endfor %}  
+</table>  
+<br><br>
+<form action="/" method="GET">
+<button class="btn btn-primary">Go back to home page</button>
+</form> 
+</div>
+</section>
+  
+</body>  
+</html>   -->
+
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <title>Today's Attendance</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center pt-5 mt-5 mb-5 text-white">Full Attendace Record</h1>
+        <div class="row mb-5 justify-content-center">
+            <div class="col-md-3">
+                <form class="mb-3 w-100" action="/data" method="post">
+                    <button class="btn btn-primary blue-btn w-100">View Today's Database</button>
+                </form>
+            </div>
+            <div class="col-md-3">
+                <form class="mb-3 w-100" action="/" method="GET">
+                    <button class="btn btn-primary blue-btn w-100">Logout</button>
+                </form>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-9">
+                <table class="table table-secondary table-striped table-bordered table-hover mb-5" >  
+                    <thead class="table-dark">  
+                        <td>Name</td>  
+                        <td>Time</td>  
+                        <td>Date</td>  
+                    </thead>   
+                    <tbody>
+                        {% for row in rows %}  
+                            <tr>  
+                                <td>{{row["NAME"]}}</td>  
+                                <td>{{row["Time"]}}</td>  
+                                <td>{{row["Date"]}}</td>  
+                            </tr>  
+                        {% endfor %}
+                    </tbody>   
+                </table>
+            </div>
+        </div>   
+    </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
+</html>
