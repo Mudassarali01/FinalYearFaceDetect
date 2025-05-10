@@ -68,8 +68,11 @@ def name():
         name2 = request.form['name2']
         username_folder = f'Training images/{name1}'
 
-        # First check if name already exists in database
+        # First create the database and table if they don't exist
         conn = sqlite3.connect('information.db')
+        conn.execute('''CREATE TABLE IF NOT EXISTS Users (NAME TEXT)''')
+        
+        # Now check if name already exists in database
         cursor = conn.cursor()
         cursor.execute("SELECT NAME FROM Users WHERE NAME=?", (name1,))
         existing_name = cursor.fetchone()
@@ -78,6 +81,7 @@ def name():
         if existing_name:
             return "Name already registered in the system!"
 
+        # Rest of your existing code remains the same...
         # Now check face similarity with existing images
         existing_encodings = []
         existing_names = []
@@ -157,7 +161,6 @@ def name():
 
         # If not registered, proceed with saving to database
         conn = sqlite3.connect('information.db')
-        conn.execute('''CREATE TABLE IF NOT EXISTS Users (NAME TEXT)''')
         conn.execute("INSERT OR IGNORE INTO Users (NAME) VALUES (?)", (name1,))
         conn.commit()
         conn.close()
