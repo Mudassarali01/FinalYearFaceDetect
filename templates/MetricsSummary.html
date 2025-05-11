@@ -12,6 +12,8 @@
     <title>Metrics Summary</title>
     <style>
         .stat-box { background: #f5f5f5;}
+        .filter-row { margin-bottom: 20px; }
+        .filter-dropdown { margin-right: 10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -54,10 +56,72 @@
                 <h5>{{ spoof_rate }}%</h5>
             </div>
         </div>
+        
+        <!-- Filter Row -->
+        <div class="row filter-row">
+            <div class="col-md-12">
+                <div class="d-flex flex-wrap">
+                    <!-- Date Filter -->
+                    <div class="filter-dropdown">
+                        <select class="form-select" id="dateFilter">
+                            <option value="">Filter by Date</option>
+                            {% for day in daily_stats %}
+                            <option value="{{ day['day'] }}">{{ day['day'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Total Attempts Filter -->
+                    <div class="filter-dropdown">
+                        <select class="form-select" id="attemptsFilter">
+                            <option value="">Filter by Total Attempts</option>
+                            <option value="high">High (Top 25%)</option>
+                            <option value="medium">Medium (Middle 50%)</option>
+                            <option value="low">Low (Bottom 25%)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Correct Filter -->
+                    <div class="filter-dropdown">
+                        <select class="form-select" id="correctFilter">
+                            <option value="">Filter by Correct</option>
+                            <option value="high">High (Top 25%)</option>
+                            <option value="medium">Medium (Middle 50%)</option>
+                            <option value="low">Low (Bottom 25%)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Spoofing Filter -->
+                    <div class="filter-dropdown">
+                        <select class="form-select" id="spoofingFilter">
+                            <option value="">Filter by Spoofing</option>
+                            <option value="high">High (Top 25%)</option>
+                            <option value="medium">Medium (Middle 50%)</option>
+                            <option value="low">Low (Bottom 25%)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Accuracy Filter -->
+                    <div class="filter-dropdown">
+                        <select class="form-select" id="accuracyFilter">
+                            <option value="">Filter by Accuracy</option>
+                            <option value="high">High (≥ 80%)</option>
+                            <option value="medium">Medium (50-79%)</option>
+                            <option value="low">Low (< 50%)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Reset Button -->
+                    <div class="filter-dropdown">
+                        <button class="btn btn-secondary" id="resetFilters">Reset Filters</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     
         <div class="row">
             <div class="col-md-12">
-                <table class="table table-secondary table-striped table-bordered table-hover mb-5">
+                <table class="table table-secondary table-striped table-bordered table-hover mb-5" id="metricsTable">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -84,5 +148,131 @@
     </div>
     <h2>Last 7 Days Activity</h2>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all filter elements
+            const dateFilter = document.getElementById('dateFilter');
+            const attemptsFilter = document.getElementById('attemptsFilter');
+            const correctFilter = document.getElementById('correctFilter');
+            const spoofingFilter = document.getElementById('spoofingFilter');
+            const accuracyFilter = document.getElementById('accuracyFilter');
+            const resetButton = document.getElementById('resetFilters');
+            const tableRows = document.querySelectorAll('#metricsTable tbody tr');
+            
+            // Function to apply all filters
+            function applyFilters() {
+                // Get all filter values
+                const dateValue = dateFilter.value;
+                const attemptsValue = attemptsFilter.value;
+                const correctValue = correctFilter.value;
+                const spoofingValue = spoofingFilter.value;
+                const accuracyValue = accuracyFilter.value;
+                
+                // First, collect all data to calculate percentiles for numeric filters
+                const attemptsData = [];
+                const correctData = [];
+                const spoofingData = [];
+                
+                tableRows.forEach(row => {
+                    attemptsData.push(parseInt(row.cells[1].textContent));
+                    correctData.push(parseInt(row.cells[2].textContent));
+                    spoofingData.push(parseInt(row.cells[3].textContent));
+                });
+                
+                // Calculate percentiles for numeric filters
+                const sortedAttempts = [...attemptsData].sort((a, b) => a - b);
+                const sortedCorrect = [...correctData].sort((a, b) => a - b);
+                const sortedSpoofing = [...spoofingData].sort((a, b) => a - b);
+                
+                const attempts25 = sortedAttempts[Math.floor(sortedAttempts.length * 0.25)];
+                const attempts75 = sortedAttempts[Math.floor(sortedAttempts.length * 0.75)];
+                const correct25 = sortedCorrect[Math.floor(sortedCorrect.length * 0.25)];
+                const correct75 = sortedCorrect[Math.floor(sortedCorrect.length * 0.75)];
+                const spoofing25 = sortedSpoofing[Math.floor(sortedSpoofing.length * 0.25)];
+                const spoofing75 = sortedSpoofing[Math.floor(sortedSpoofing.length * 0.75)];
+                
+                // Apply filters to each row
+                tableRows.forEach(row => {
+                    const rowDate = row.cells[0].textContent;
+                    const rowAttempts = parseInt(row.cells[1].textContent);
+                    const rowCorrect = parseInt(row.cells[2].textContent);
+                    const rowSpoofing = parseInt(row.cells[3].textContent);
+                    const rowAccuracy = parseFloat(row.cells[4].textContent);
+                    
+                    let showRow = true;
+                    
+                    // Date filter
+                    if (dateValue && rowDate !== dateValue) {
+                        showRow = false;
+                    }
+                    
+                    // Attempts filter
+                    if (attemptsValue && showRow) {
+                        if (attemptsValue === 'high' && rowAttempts < attempts75) {
+                            showRow = false;
+                        } else if (attemptsValue === 'medium' && (rowAttempts <= attempts25 || rowAttempts >= attempts75)) {
+                            showRow = false;
+                        } else if (attemptsValue === 'low' && rowAttempts > attempts25) {
+                            showRow = false;
+                        }
+                    }
+                    
+                    // Correct filter
+                    if (correctValue && showRow) {
+                        if (correctValue === 'high' && rowCorrect < correct75) {
+                            showRow = false;
+                        } else if (correctValue === 'medium' && (rowCorrect <= correct25 || rowCorrect >= correct75)) {
+                            showRow = false;
+                        } else if (correctValue === 'low' && rowCorrect > correct25) {
+                            showRow = false;
+                        }
+                    }
+                    
+                    // Spoofing filter
+                    if (spoofingValue && showRow) {
+                        if (spoofingValue === 'high' && rowSpoofing < spoofing75) {
+                            showRow = false;
+                        } else if (spoofingValue === 'medium' && (rowSpoofing <= spoofing25 || rowSpoofing >= spoofing75)) {
+                            showRow = false;
+                        } else if (spoofingValue === 'low' && rowSpoofing > spoofing25) {
+                            showRow = false;
+                        }
+                    }
+                    
+                    // Accuracy filter
+                    if (accuracyValue && showRow) {
+                        if (accuracyValue === 'high' && rowAccuracy < 80) {
+                            showRow = false;
+                        } else if (accuracyValue === 'medium' && (rowAccuracy < 50 || rowAccuracy >= 80)) {
+                            showRow = false;
+                        } else if (accuracyValue === 'low' && rowAccuracy >= 50) {
+                            showRow = false;
+                        }
+                    }
+                    
+                    // Toggle row visibility
+                    row.style.display = showRow ? '' : 'none';
+                });
+            }
+            
+            // Add event listeners to all filters
+            dateFilter.addEventListener('change', applyFilters);
+            attemptsFilter.addEventListener('change', applyFilters);
+            correctFilter.addEventListener('change', applyFilters);
+            spoofingFilter.addEventListener('change', applyFilters);
+            accuracyFilter.addEventListener('change', applyFilters);
+            
+            // Reset button
+            resetButton.addEventListener('click', function() {
+                dateFilter.value = '';
+                attemptsFilter.value = '';
+                correctFilter.value = '';
+                spoofingFilter.value = '';
+                accuracyFilter.value = '';
+                applyFilters();
+            });
+        });
+    </script>
 </body>
 </html>
